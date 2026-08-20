@@ -221,18 +221,29 @@ They have not reviewed this project, have not endorsed it, and had no
 involvement in or knowledge of this acknowledgement being written. I speak
 only for myself.
 
-That said: if you are looking for a project worth supporting, I would
-encourage you to consider them. Providing open inference access to the
-public is meaningful infrastructure work. It lowers the barrier to entry
-for independent researchers, students, hobbyists, and developers who would
-otherwise be priced out of building anything non-trivial with modern
-models. Capability that only the well-funded can access is capability that
-concentrates rather than distributes, and organizations doing the
-unglamorous work of keeping inference publicly available are doing
-something structurally valuable.
+**This is not a recommendation to go use them.** Please read that literally.
+FreeInference is a small operation, and free inference capacity is a finite
+pool paid for by someone. A tool like this one is exactly the wrong thing to
+point at a small provider: Bag of Rats is a *parallelism* harness whose entire
+purpose is issuing many concurrent model calls per task. Running it against a
+volunteer-scale endpoint is how you degrade a service for everyone already
+depending on it. If you adopt this project, point it at capacity you are
+paying for, or at a local model.
 
-Support them if you can. If you can't, no obligation — this is a
-recommendation, not a solicitation.
+What I am actually saying is narrower: they are worth **supporting**, which is
+a different verb from *consuming*. Keeping inference openly available is
+unglamorous infrastructure work, and it is what lets independent researchers,
+students, hobbyists, and unfunded developers build anything non-trivial with
+modern models at all. Capability only the well-funded can reach is capability
+that concentrates rather than distributes. That work deserves to be funded and
+credited rather than quietly strained.
+
+So: if you have money, attention, or infrastructure to direct somewhere, they
+are a good candidate. If what you have is a workload, send it elsewhere. The
+most useful thing most readers can do is nothing at all — which is a
+legitimate outcome here, not a cop-out.
+
+None of the above is solicited by them, and it is not a solicitation from me.
 
 ## License
 
