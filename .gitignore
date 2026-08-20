@@ -1,0 +1,16 @@
+# Bag of Rats runtime and local artifacts
+
+# Shadow worktrees provisioned by the hook for concurrent agents
+.claude/worktrees/
+
+# Installer backups
+settings.json.bak
+*.bak
+
+# Smoke suite scratch output
+/tmp/bor-install-smoke.log
+
+# Editor / OS noise
+*.swp
+*~
+.DS_Store

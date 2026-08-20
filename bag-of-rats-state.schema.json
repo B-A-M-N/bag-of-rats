@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://freeinference.local/schemas/bag-of-rats-state-v1.json",
+  "title": "Bag of Rats per-session pipeline state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "active",
+    "phase",
+    "roster_position",
+    "source_revision",
+    "objective_revision",
+    "completed_phases",
+    "active_dispatch",
+    "pipeline_phases",
+    "dispatch_id",
+    "dispatch_status",
+    "dispatch_phase",
+    "dispatch_agent_id",
+    "dispatch_result_digest",
+    "dispatch_tool_use_id",
+    "dispatch_started_at",
+    "grounding_done",
+    "design_done",
+    "implementing_done",
+    "repair_count",
+    "verify_done",
+    "complete"
+  ],
+  "properties": {
+    "active": {
+      "type": "boolean",
+      "description": "Whether Bag of Rats is active for this session"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["GROUNDING", "DESIGN", "IMPLEMENTING", "REPAIR", "VERIFY", "COMPLETE", "BLOCKED"],
+      "description": "The current pipeline phase"
+    },
+    "roster_position": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Index into the model roster for the next assignment (cycles through models)"
+    },
+    "source_revision": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many times the tree has been mutated"
+    },
+    "objective_revision": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Objective revision (incremented on phase changes)"
+    },
+    "completed_phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["phase", "model", "result", "timestamp"],
+        "properties": {
+          "phase": {"type": "string"},
+          "model": {"type": "string"},
+          "agent_type": {"type": "string"},
+          "dispatch_id": {"type": "string"},
+          "result": {"type": "string", "enum": ["PASS", "BLOCK", "NEEDS_RETRY", "ESCALATE", "REPAIRED", "CLEAN", "STUCK"]},
+          "verdict": {"type": "string"},
+          "changeset_summary": {"type": "string"},
+          "files_changed": {"type": "array", "items": {"type": "string"}},
+          "timestamp": {"type": "string"}
+        }
+      },
+      "description": "Historical record of completed phases"
+    },
+    "pipeline_phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "assigned_model"],
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string", "enum": ["GROUNDING", "DESIGN", "IMPLEMENTING", "REPAIR", "VERIFY", "COMPLETE"]},
+          "assigned_model": {"type": "string", "enum": ["deepseek", "qwen", "minimax", "kimi", "glm"]},
+          "required_inputs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Phase names this phase depends on"
+          },
+          "status": {"type": "string", "enum": ["pending", "dispatched", "completed", "blocked", "skipped"]},
+          "dispatch_id": {"type": "string"},
+          "completion_index": {"type": "integer"}
+        }
+      },
+      "description": "Defined pipeline phases and their current status"
+    },
+    "dispatch_id": {"type": "string"},
+    "dispatch_status": {
+      "type": "string",
+      "enum": ["", "idle", "running", "consumed", "failed", "cancelled", "stale", "timed_out", "retry_required"]
+    },
+    "dispatch_phase": {"type": "string"},
+    "dispatch_agent_id": {"type": "string"},
+    "dispatch_result_digest": {"type": "string"},
+    "dispatch_tool_use_id": {"type": "string"},
+    "dispatch_started_at": {"type": "string"},
+    "grounding_done": {"type": "boolean"},
+    "design_done": {"type": "boolean"},
+    "implementing_done": {"type": "boolean"},
+    "repair_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "verify_done": {"type": "boolean"},
+    "complete": {
+      "type": "boolean",
+      "description": "Pipeline has reached COMPLETE"
+    },
+    "blocked_reason": {
+      "type": "string",
+      "description": "If pipeline is BLOCKED, the reason"
+    },
+    "escalation_target": {
+      "type": "string",
+      "enum": ["", "kimi", "glm", "unavailable"],
+      "description": "Which authority to escalate to"
+    },
+    "loop_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many times the pipeline has cycled through repair"
+    },
+    "state_version": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

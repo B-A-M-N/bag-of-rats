@@ -1,0 +1,31 @@
+{
+  "_comment": "Hook registrations for settings.json. install.sh merges these into the target profile's settings.hooks; each key appends to the existing array. Paths use the HOOK_CMD placeholder that install.sh replaces with the installed bag-of-rats-hook.sh absolute path.",
+  "PreToolUse": [
+    {
+      "hooks": [{"command": "@HOOK_CMD@ pre-tool", "timeout": 5, "type": "command"}],
+      "matcher": "^(Agent|Edit|Write|MultiEdit|NotebookEdit|Read|Grep|Glob|Bash)$"
+    }
+  ],
+  "SubagentStop": [
+    {
+      "hooks": [{"command": "@HOOK_CMD@ subagent-stop", "timeout": 5, "type": "command"}],
+      "matcher": ".*"
+    }
+  ],
+  "Stop": [
+    {
+      "hooks": [{"command": "@HOOK_CMD@ stop", "timeout": 5, "type": "command"}]
+    }
+  ],
+  "UserPromptExpansion": [
+    {
+      "hooks": [{"command": "@HOOK_CMD@ prompt-expansion", "timeout": 3, "type": "command"}],
+      "matcher": "^(bor|bor-off|bor-config|bag-of-rats|bag-of-rats-off)$"
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "hooks": [{"command": "@HOOK_CMD@ prompt", "timeout": 3, "type": "command"}]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "roles": 3,
+  "max_concurrent": 3,
+  "merge_policy": "auto",
+  "role_structure": {
+    "2": {
+      "implement": [
+        "main",
+        "fork"
+      ],
+      "review": [
+        "qwen",
+        "minimax"
+      ],
+      "note": "Two roles: implement (main + forks) and review (qwen first, minimax senior)"
+    },
+    "3": {
+      "implement": [
+        "main",
+        "fork"
+      ],
+      "review": [
+        "qwen",
+        "minimax"
+      ],
+      "arbiter": [
+        "kimi",
+        "glm"
+      ],
+      "note": "Three roles adds the arbiter tier \u2014 one tier above implement/review. Orchestrator stays the main model; kimi/glm only arbitrate escalated disputes or act as final signoff."
+    }
+  },
+  "rounds": {
+    "max_implement": 2,
+    "max_repair": 3,
+    "escalate_after_matching_failures": 2
+  }
+}
