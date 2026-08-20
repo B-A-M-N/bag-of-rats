@@ -1,61 +1,131 @@
 # Bag of Rats
 
-A toggleable multi-model async pipeline for Claude Code. Type `/bor` and the
-main model starts fanning work out to a pack of agents instead of doing
-everything itself, one thing at a time.
+**A toggleable async agent pipeline for Claude Code that makes concurrent work cheap enough to use by default.**
+
+Type `/bor` and the main model stops treating a task as one serial trajectory. Work that can proceed independently is dispatched to a pack of agents, while a hook handles the bookkeeping that normally makes concurrent agents annoying: round tracking, concurrency limits, isolated writes, reconciliation, phase transitions, and completion.
+
+Bag of Rats is deliberately small. It is not an autonomous software company, a planning framework, or a hierarchy of agents pretending to be employees.
+
+It is infrastructure for one specific thing:
+
+> **Let multiple model trajectories work on the same objective concurrently without making the orchestrating model manually manage the concurrency.**
 
 ## Why this exists
 
-Parallelism in agentic coding is usually available but rarely used, because
-using it costs more than doing the work serially. You have to decide how to
-split the task, dispatch the workers, track which ones are still running,
-notice when they've all finished, and merge whatever they each did to the
-same files. That is real bookkeeping, and it is the kind of bookkeeping a
-model quietly skips under pressure. So the default behavior becomes: one
-agent, one file at a time, and the other N-1 available slots sit idle.
+Claude Code can already dispatch subagents.
 
-Bag of Rats exists to make maximum parallelism the easy path — the thing you
-get by default rather than the thing you opt into and manage. It moves the
-bookkeeping into a hook, so the orchestrating model only has to answer "what
-can run right now?" and dispatch it.
+That is not the problem.
 
-The hook handles the rest:
+The problem is everything that happens once you dispatch several of them at the same time.
 
-- **Round tracking.** Every agent dispatch registers into the current round.
-  When the last one stops, the round closes and the pipeline advances on its
-  own. Nobody has to poll or remember.
-- **Concurrent writes don't block.** Each agent past the first gets its own
-  git worktree to edit in. Rats never wait on each other, and never fail a
-  write because a sibling holds the file.
-- **Merging is automatic by default.** Shadow trees reconcile back with a
-  3-way merge when the round closes. Only genuine textual conflicts surface
-  to a human, and they surface as an explicit queue rather than as silently
-  lost edits.
-- **One sync point, not many.** The pending-merge queue is the only place the
-  pipeline stops to wait. Everything else runs async.
+Someone has to decide what can safely run concurrently, remember which agents belong to the current round, track when they finish, stop additional dispatches from exceeding the concurrency budget, prevent concurrent writers from trampling each other, reconcile their changes, surface genuine conflicts, advance the workflow, and prevent the main session from declaring victory while work is still outstanding.
 
-The result is that "dispatch three agents at once" costs about as much
-thought as "dispatch one." The design bias throughout is async first, sync
-only when a phase genuinely needs an upstream result — and the enforcement
-lives in a hook, so it holds even when the model would rather cut corners.
+Without machinery around it, parallel agent use has an operational tax.
 
-It is also deliberately small. Bag of Rats is not a gate system and does not
-review your work: there is no grounder gate, no design gate, no signoff
-gate, no tier enforcement. It tracks rounds, keeps read-only phases
-read-only, isolates concurrent writers, and holds Stop until the pipeline is
-done. That is the entire scope.
+Models respond to that tax the same way people do: they avoid paying it.
 
-Completely independent of `/fi-flow` — separate state root, separate hook,
-separate commands. Neither workflow reads, writes, or knows about the other's
-state. Activating one has zero effect on the other.
+A task that could have several independent lines of work becomes one long serial trajectory. Available agent slots sit unused because coordinating them is more cumbersome than simply continuing alone.
+
+Bag of Rats moves that coordination cost into a hook.
+
+The orchestrating model should mostly have to answer one question:
+
+**What useful work can run independently right now?**
+
+Then it dispatches the rats.
+
+The hook handles the rest.
+
+### What the hook owns
+
+* **Round tracking.** Every agent dispatch registers into the current round. When the final agent stops, the round closes automatically.
+
+* **Concurrency enforcement.** A configured cap limits how many rats may run in a round at once.
+
+* **Concurrent-write isolation.** Additional writing agents receive their own git worktrees instead of competing for the same working tree.
+
+* **Automatic reconciliation.** Shadow worktrees reconcile into the main working tree using configurable merge policies, including 3-way merging.
+
+* **Explicit conflict handling.** Genuine textual conflicts enter a pending-merge queue rather than silently overwriting another agent's work.
+
+* **Phase enforcement.** Read-only phases remain read-only even if an agent attempts to edit.
+
+* **Pipeline completion.** Claude Code's Stop path is held while an active Bag of Rats pipeline still has work outstanding.
+
+The result is not that parallelism suddenly becomes free.
+
+It becomes **operationally cheap**.
+
+Dispatching three agents still costs roughly three agents' worth of inference. Bag of Rats does not pretend otherwise. What it removes is much of the orchestration overhead that normally makes using those three agents inconvenient.
 
 ## What it is
 
-Bag of Rats runs an N-at-a-time async pipeline where the main model
-orchestrates a pack of rat agents that alternate between implementing and
-reviewing. Rounds advance the moment their agents finish — the hook's only
-job is to answer "did the round finish?" and hold Stop until the pipeline
-completes.
+Bag of Rats is an **N-at-a-time asynchronous execution layer for Claude Code agents**.
+
+The main model remains the orchestrator. Rats perform bounded pieces of work inside a phase. The hook manages lifecycle and coordination underneath them.
+
+A typical pipeline might look like:
+
+`GROUNDING → IMPLEMENTING → REPAIR → VERIFY`
+
+Within a phase, several independent agents can run concurrently. When the round finishes, Bag of Rats reconciles their work and advances the pipeline.
+
+The emphasis is:
+
+**async first; synchronize only where dependency or reconciliation actually requires it.**
+
+## What it is not
+
+Bag of Rats is not trying to invent another general-purpose multi-agent framework.
+
+It does not provide:
+
+* artificial organizations of manager/worker personas
+* long-lived autonomous agent societies
+* a planning DSL
+* a task marketplace
+* memory architecture
+* a universal agent protocol
+* mandatory review bureaucracy
+* claims that more agents automatically produce better reasoning
+
+It provides concurrency infrastructure.
+
+That distinction matters.
+
+## Isn't this just calling `Agent()` several times?
+
+At the surface level, yes: the actual workers are ordinary Claude Code agents.
+
+That is intentional.
+
+Bag of Rats does not replace the agent primitive. It handles what the primitive does **not** handle for you.
+
+Calling `Agent()` three times is easy.
+
+Reliably operating three concurrent agents that may edit the same repository, determining when their round has actually completed, isolating their writes, reconciling those writes, preserving unresolved conflicts, enforcing workflow state, and preventing premature termination is the part Bag of Rats exists to solve.
+
+The rats are not the product.
+
+**The concurrency semantics around the rats are.**
+
+## A note on parallelism
+
+More agents are not automatically better.
+
+Three highly correlated agents can produce three versions of the same mistake. Parallelism also consumes more inference than serial execution.
+
+Bag of Rats therefore should not be understood as "throw as many models as possible at everything."
+
+Its purpose is narrower:
+
+> **When a problem contains genuinely independent work, make exploiting that independence easy.**
+
+Good uses include parallel investigation, implementation of independent components, competing diagnoses, independent review, verification, and repair work that does not require an upstream result first.
+
+Work with strict dependencies should remain serial.
+
+Bag of Rats removes the machinery penalty for concurrency. It does not remove the need to decide when concurrency is useful.
 
 ## Commands
 
