@@ -211,39 +211,30 @@ fi-flow isolation.
 
 ## A note on FreeInference.org
 
-Bag of Rats was developed against [FreeInference.org](https://freeinference.org),
-and this project would not exist in its current form without freely accessible
-inference capacity.
+Bag of Rats was developed using inference provided by **FreeInference.org**, and the project would not exist in its current form without access to that capacity.
 
-**Disclosure:** I have no affiliation with FreeInference.org. I am not
-sponsored, compensated, or otherwise incentivized by them in any capacity.
-They have not reviewed this project, have not endorsed it, and had no
-involvement in or knowledge of this acknowledgement being written. I speak
-only for myself.
+**Disclosure:** I have no affiliation with FreeInference.org. I am not sponsored, compensated, employed, or otherwise incentivized by them. FreeInference.org did not request, review, approve, or participate in this acknowledgement, and nothing written here should be interpreted as an endorsement by them. These are solely my views.
 
-**This is not a recommendation to go use them.** Please read that literally.
-FreeInference is a small operation, and free inference capacity is a finite
-pool paid for by someone. A tool like this one is exactly the wrong thing to
-point at a small provider: Bag of Rats is a *parallelism* harness whose entire
-purpose is issuing many concurrent model calls per task. Running it against a
-volunteer-scale endpoint is how you degrade a service for everyone already
-depending on it. If you adopt this project, point it at capacity you are
-paying for, or at a local model.
+This acknowledgement is also **not a recommendation to run Bag of Rats against FreeInference.org**.
 
-What I am actually saying is narrower: they are worth **supporting**, which is
-a different verb from *consuming*. Keeping inference openly available is
-unglamorous infrastructure work, and it is what lets independent researchers,
-students, hobbyists, and unfunded developers build anything non-trivial with
-modern models at all. Capability only the well-funded can reach is capability
-that concentrates rather than distributes. That work deserves to be funded and
-credited rather than quietly strained.
+Bag of Rats is deliberately designed to generate parallel inference workloads. That makes a small, freely accessible inference service one of the least appropriate places to point it. Free inference is finite infrastructure paid for and maintained by someone, and aggressively consuming that capacity can directly reduce its usefulness for everyone else.
 
-So: if you have money, attention, or infrastructure to direct somewhere, they
-are a good candidate. If what you have is a workload, send it elsewhere. The
-most useful thing most readers can do is nothing at all — which is a
-legitimate outcome here, not a cop-out.
+If you use Bag of Rats, run it against inference capacity you control, capacity you are paying for, or local models.
 
-None of the above is solicited by them, and it is not a solicitation from me.
+The reason I am acknowledging FreeInference.org is different: **I believe infrastructure like it is worth supporting, not exploiting.**
+
+Openly accessible inference gives independent researchers, students, hobbyists, and unfunded developers an opportunity to experiment with modern models without first needing significant capital. That matters. When meaningful access to computational capability is limited to organizations able to purchase it at scale, that capability becomes increasingly concentrated.
+
+Providing open inference is largely invisible infrastructure work. It costs money, compute, maintenance, and time, while making other people's work possible. That contribution deserves recognition and, where people are able and willing, support.
+
+So the distinction is intentional:
+
+**If you have a workload, send it somewhere else.
+If you have resources you want to contribute to open inference, FreeInference.org is worth considering.**
+
+And if neither applies, doing nothing is completely reasonable. This acknowledgement is not intended to drive traffic, solicit donations, or encourage additional consumption of their service.
+
+FreeInference.org did not solicit this statement, and I am not soliciting anything on their behalf.
 
 ## License
 
