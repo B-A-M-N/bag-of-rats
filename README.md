@@ -211,28 +211,33 @@ fi-flow isolation.
 
 ## A note on FreeInference.org
 
-Bag of Rats was developed using inference provided by **FreeInference.org**, and the project would not exist in its current form without access to that capacity.
+Bag of Rats was developed and tested using inference made available by **FreeInference.org**. Access to that capacity materially enabled the experimentation that produced this project, and I want to acknowledge that plainly.
 
-**Disclosure:** I have no affiliation with FreeInference.org. I am not sponsored, compensated, employed, or otherwise incentivized by them. FreeInference.org did not request, review, approve, or participate in this acknowledgement, and nothing written here should be interpreted as an endorsement by them. These are solely my views.
+**Disclosure:** I have no affiliation with FreeInference.org. I am not sponsored, compensated, employed, or otherwise incentivized by them. They did not request, review, approve, endorse, or participate in Bag of Rats or in this acknowledgement. I speak only for myself.
 
-This acknowledgement is also **not a recommendation to run Bag of Rats against FreeInference.org**.
+Just as importantly, **this is not a recommendation to run Bag of Rats against FreeInference.org.**
 
-Bag of Rats is deliberately designed to generate parallel inference workloads. That makes a small, freely accessible inference service one of the least appropriate places to point it. Free inference is finite infrastructure paid for and maintained by someone, and aggressively consuming that capacity can directly reduce its usefulness for everyone else.
+Bag of Rats makes it easy to fan a task out across multiple model agents concurrently. It does not itself provide inference or require FreeInference.org, but when the models behind those agents are served by a remote provider, using Bag of Rats can multiply the amount of inference consumed by a single task.
 
-If you use Bag of Rats, run it against inference capacity you control, capacity you are paying for, or local models.
+That is exactly why a small, freely accessible inference service is the wrong target for sustained Bag of Rats workloads.
 
-The reason I am acknowledging FreeInference.org is different: **I believe infrastructure like it is worth supporting, not exploiting.**
+Free inference is not free to operate. Someone is supplying the GPUs, electricity, bandwidth, engineering, and maintenance. A parallel agent harness can consume that shared capacity much faster than an ordinary interactive session, potentially reducing what remains available to everybody else.
 
-Openly accessible inference gives independent researchers, students, hobbyists, and unfunded developers an opportunity to experiment with modern models without first needing significant capital. That matters. When meaningful access to computational capability is limited to organizations able to purchase it at scale, that capability becomes increasingly concentrated.
+If you use Bag of Rats regularly, point its agents at **local models, infrastructure you control, or inference capacity you are paying for.**
 
-Providing open inference is largely invisible infrastructure work. It costs money, compute, maintenance, and time, while making other people's work possible. That contribution deserves recognition and, where people are able and willing, support.
+My reason for mentioning FreeInference.org is therefore not "go consume this service." It is nearly the opposite.
 
-So the distinction is intentional:
+I think infrastructure that keeps capable inference accessible to people without significant funding is worth recognizing and supporting. Independent developers, researchers, students, and hobbyists can only experiment with systems like this when they can reach the underlying models in the first place. If access to capable models exists only for those able to purchase substantial compute, experimentation and capability increasingly concentrate in the same places as capital.
 
-**If you have a workload, send it somewhere else.
-If you have resources you want to contribute to open inference, FreeInference.org is worth considering.**
+Making inference openly accessible is expensive and largely invisible infrastructure work. It enables projects whose authors may never be in a position to repay the compute they consumed.
 
-And if neither applies, doing nothing is completely reasonable. This acknowledgement is not intended to drive traffic, solicit donations, or encourage additional consumption of their service.
+So the distinction I want to make is simple:
+
+**If what you have is a workload, send it somewhere else.**
+
+**If what you have is money, hardware, infrastructure, or other resources you want to direct toward keeping inference accessible, FreeInference.org is worth considering.**
+
+And if neither applies, you do not need to do anything. This acknowledgement is not intended to drive traffic to their inference endpoints or encourage additional consumption of their service.
 
 FreeInference.org did not solicit this statement, and I am not soliciting anything on their behalf.
 
